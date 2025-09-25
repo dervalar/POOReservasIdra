@@ -32,6 +32,7 @@ public class VistaReservas extends javax.swing.JFrame {
         btnUpdateReserva = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblReservas = new javax.swing.JTable();
+        btnMenu1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(600, 400));
@@ -39,8 +40,10 @@ public class VistaReservas extends javax.swing.JFrame {
         lblReservas.setFont(new java.awt.Font("Lucida Console", 1, 32)); // NOI18N
         lblReservas.setText("RESERVAS");
 
+        btnAddReserva.setFont(new java.awt.Font("Lucida Console", 1, 14)); // NOI18N
         btnAddReserva.setText("Crear Reserva");
 
+        btnUpdateReserva.setFont(new java.awt.Font("Lucida Console", 1, 14)); // NOI18N
         btnUpdateReserva.setText("Actualizar Reserva");
 
         tblReservas.setModel(new javax.swing.table.DefaultTableModel(
@@ -64,6 +67,14 @@ public class VistaReservas extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblReservas);
 
+        btnMenu1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        btnMenu1.setText("MENU");
+        btnMenu1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMenu1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -71,7 +82,10 @@ public class VistaReservas extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblReservas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblReservas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(3, 3, 3)
+                        .addComponent(btnMenu1))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnAddReserva)
@@ -84,18 +98,29 @@ public class VistaReservas extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUpdateReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenu1ActionPerformed
+        // TODO add your handling code here:
+        VistaMenu1 vMenu1 = new VistaMenu1();
+        vMenu1.setVisible(true);
+        vMenu1.setLocationRelativeTo(null);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnMenu1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -134,6 +159,7 @@ public class VistaReservas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddReserva;
+    private javax.swing.JButton btnMenu1;
     private javax.swing.JButton btnUpdateReserva;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

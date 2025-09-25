@@ -93,6 +93,11 @@ public class VistaAddPersona extends javax.swing.JFrame {
 
         btnCancelarPersona.setFont(new java.awt.Font("Lucida Console", 1, 24)); // NOI18N
         btnCancelarPersona.setText("CANCELAR");
+        btnCancelarPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarPersonaActionPerformed(evt);
+            }
+        });
 
         btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 34)); // NOI18N
         btnCancelarPersona1.setText("AÑADIR");
@@ -161,6 +166,15 @@ public class VistaAddPersona extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCancelarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarPersonaActionPerformed
+        // TODO add your handling code here:
+        VistaPersona vPersona = new VistaPersona();
+        vPersona.setVisible(true);
+        vPersona.setLocationRelativeTo(null);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarPersonaActionPerformed
 
     /**
      * @param args the command line arguments
