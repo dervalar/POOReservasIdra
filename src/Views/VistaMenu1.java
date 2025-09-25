@@ -60,6 +60,11 @@ public class VistaMenu1 extends javax.swing.JFrame {
         btnMenuHabitaciones.setForeground(new java.awt.Color(0, 0, 0));
         btnMenuHabitaciones.setText("HABITACIONES");
         btnMenuHabitaciones.setToolTipText("Sección RESERVAS");
+        btnMenuHabitaciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMenuHabitacionesActionPerformed(evt);
+            }
+        });
 
         lblBienvenida.setFont(new java.awt.Font("Lucida Console", 1, 18)); // NOI18N
         lblBienvenida.setForeground(new java.awt.Color(0, 0, 0));
@@ -106,10 +111,11 @@ public class VistaMenu1 extends javax.swing.JFrame {
 
     private void btnMenuPersonasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuPersonasActionPerformed
         // TODO add your handling code here:
+        VistaPersona vPersona = new VistaPersona();
+        vPersona.setVisible(true);
+        vPersona.setLocationRelativeTo(null);
         
-        
-        
-        
+        this.dispose();
     }//GEN-LAST:event_btnMenuPersonasActionPerformed
 
     private void btnMenuReservasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuReservasActionPerformed
@@ -120,6 +126,15 @@ public class VistaMenu1 extends javax.swing.JFrame {
         
         this.dispose();
     }//GEN-LAST:event_btnMenuReservasActionPerformed
+
+    private void btnMenuHabitacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuHabitacionesActionPerformed
+        // TODO add your handling code here:
+        VistaHabitacion vHabitacion = new VistaHabitacion();
+        vHabitacion.setVisible(true);
+        vHabitacion.setLocationRelativeTo(null);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnMenuHabitacionesActionPerformed
 
     /**
      * @param args the command line arguments

@@ -97,6 +97,9 @@
         <Property name="text" type="java.lang.String" value="HABITACIONES"/>
         <Property name="toolTipText" type="java.lang.String" value="Secci&#xf3;n RESERVAS"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMenuHabitacionesActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="lblBienvenida">
       <Properties>
