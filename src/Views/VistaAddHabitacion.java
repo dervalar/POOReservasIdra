@@ -106,8 +106,8 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
             }
         });
 
-        btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 34)); // NOI18N
-        btnCancelarPersona1.setText("AÑADIR");
+        btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 30)); // NOI18N
+        btnCancelarPersona1.setText("GUARDAR");
 
         inpPrecioBase.setToolTipText("Escriba el TELEFONO de la persona a añadir");
         inpPrecioBase.setName("inpNombre"); // NOI18N

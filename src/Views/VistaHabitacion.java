@@ -44,17 +44,7 @@ public class VistaHabitacion extends javax.swing.JFrame {
         tblHabitaciones.setForeground(new java.awt.Color(255, 255, 204));
         tblHabitaciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "id", "Numero", "Capacidad", "Precio Base", "Estado"

@@ -241,9 +241,9 @@
     <Component class="javax.swing.JButton" name="btnCancelarPersona1">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Lucida Console" size="34" style="1"/>
+          <Font name="Lucida Console" size="30" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="A&#xd1;ADIR"/>
+        <Property name="text" type="java.lang.String" value="GUARDAR"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="inpPrecioBase">
