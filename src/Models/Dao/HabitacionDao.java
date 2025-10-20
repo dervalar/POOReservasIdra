@@ -5,6 +5,7 @@
 package Models.Dao;
 
 import Models.Habitacion;
+import config.ConnectionFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -12,6 +13,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,8 +27,8 @@ public class HabitacionDao implements Dao<Habitacion>{
     
     private Connection cn;
     
-    private HabitacionDao() throws SQLException {
-        cn = DriverManager.getConnection("jdbc:jdbc:mysql://localhost:3306/hotel?useSSL=false&serverTimezone=UTC", "root", "root88");
+    public HabitacionDao() throws SQLException {
+        conectar();
     }
     
     public static HabitacionDao getInstance() throws DaoException {
@@ -71,7 +75,7 @@ public class HabitacionDao implements Dao<Habitacion>{
     }
 
     @Override
-    public Habitacion findById(Long id) throws DaoException {
+    public Habitacion findById(int id) throws DaoException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -81,8 +85,22 @@ public class HabitacionDao implements Dao<Habitacion>{
     }
 
     @Override
-    public void delete(Long id) throws DaoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void delete(int id) throws DaoException {
+        String sql = "DELETE FROM habitacion WHERE id = ? AND estado = 'DISPONIBLE'";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DaoException(ex.getMessage());
+        }
+    }
+
+    private void conectar() throws SQLException {
+        cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root",
+                "root88"
+        );
     }
     
 }
