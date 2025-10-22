@@ -70,8 +70,22 @@ public class HabitacionDao implements Dao<Habitacion>{
     }
 
     @Override
-    public void save(Habitacion t) throws DaoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void save(Habitacion h) throws DaoException {
+        String sql = "INSERT INTO habitacion (numero, tipo, capacidad, precio_base, estado) VALUES (?, ?, ?, ?, ?)";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88"); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+                ps.setString(1, h.getNumero());
+                ps.setString(2, h.getTipo());
+                ps.setInt(3, h.getCapacidad());
+                ps.setDouble(4, h.getPrecioBase());
+                ps.setString(5, h.getEstado());
+                ps.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new DaoException("Error al insertar habitación: " + e.getMessage());
+        }
     }
 
     @Override
@@ -80,8 +94,25 @@ public class HabitacionDao implements Dao<Habitacion>{
     }
 
     @Override
-    public void update(Habitacion t) throws DaoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void update(Habitacion h) throws DaoException {
+        String sql = "UPDATE habitacion SET numero=?, tipo=?, capacidad=?, precio_base=?, estado=? WHERE id=?";
+
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+         PreparedStatement ps = cn.prepareStatement(sql)) {
+
+        ps.setString(1, h.getNumero());
+        ps.setString(2, h.getTipo());
+        ps.setInt(3, h.getCapacidad());
+        ps.setDouble(4, h.getPrecioBase());
+        ps.setString(5, h.getEstado());
+        ps.setInt(6, h.getId());
+        ps.executeUpdate();
+
+    } catch (SQLException e) {
+        throw new DaoException("Error al actualizar habitación: " + e.getMessage());
+    }
     }
 
     @Override

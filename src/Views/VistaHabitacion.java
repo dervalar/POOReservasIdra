@@ -4,6 +4,14 @@
  */
 package Views;
 
+import Models.Dao.DaoException;
+import Models.Dao.HabitacionDao;
+import Models.Habitacion;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author lisan
@@ -14,7 +22,15 @@ public class VistaHabitacion extends javax.swing.JFrame {
      * Creates new form Vista1
      */
     public VistaHabitacion() {
+        
         initComponents();
+        try {
+            habitacionDao = HabitacionDao.getInstance();
+        } catch (DaoException ex) {
+            Logger.getLogger(VistaHabitacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        cargarTabla();
+        
     }
 
     /**
@@ -41,20 +57,20 @@ public class VistaHabitacion extends javax.swing.JFrame {
         setName("VHabitaciones"); // NOI18N
 
         tblHabitaciones.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        tblHabitaciones.setForeground(new java.awt.Color(255, 255, 204));
+        tblHabitaciones.setForeground(new java.awt.Color(0, 0, 0));
         tblHabitaciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "id", "Numero", "Capacidad", "Precio Base", "Estado"
+                "id", "Numero", "Tipo", "Capacidad", "Precio Base", "Estado"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -83,12 +99,22 @@ public class VistaHabitacion extends javax.swing.JFrame {
         btnDeleteHabitacion.setToolTipText("BORRAR HABITACION");
         btnDeleteHabitacion.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btnDeleteHabitacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnDeleteHabitacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteHabitacionActionPerformed(evt);
+            }
+        });
 
         btnUpdateHabitacion.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 1, 24)); // NOI18N
         btnUpdateHabitacion.setText("ACTUALIZAR HABITACION");
         btnUpdateHabitacion.setToolTipText("ACTUALIZAR HABITACION");
         btnUpdateHabitacion.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btnUpdateHabitacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnUpdateHabitacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateHabitacionActionPerformed(evt);
+            }
+        });
 
         lblHabitaciones.setBackground(new java.awt.Color(255, 255, 204));
         lblHabitaciones.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 1, 36)); // NOI18N
@@ -109,17 +135,17 @@ public class VistaHabitacion extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(btnAddHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnUpdateHabitacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnUpdateHabitacion, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnDeleteHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(25, 25, 25)
                         .addComponent(lblHabitaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -164,6 +190,79 @@ public class VistaHabitacion extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnAddHabitacionActionPerformed
 
+    private void btnDeleteHabitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteHabitacionActionPerformed
+        // TODO add your handling code here:
+        int filaSeleccionada = tblHabitaciones.getSelectedRow();
+
+        if (filaSeleccionada == -1) {
+            // Ninguna fila seleccionada
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Por favor, seleccioná una habitación para eliminar.",
+                "Sin selección",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        
+        int idHabitacion = Integer.parseInt(tblHabitaciones.getValueAt(filaSeleccionada, 0).toString());
+        String numeroHabitacion = tblHabitaciones.getValueAt(filaSeleccionada, 1).toString();
+
+        // Confirmación del usuario
+        int opcion = javax.swing.JOptionPane.showConfirmDialog(this,
+            "¿Seguro que querés eliminar la habitación Nº " + numeroHabitacion + "?",
+            "Confirmar eliminación",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+
+        if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                
+                habitacionDao.delete(idHabitacion);  // tu método deleteById o similar
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Habitación eliminada correctamente.",
+                    "Éxito",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                // Refrescar tabla
+                cargarTabla();
+
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error al eliminar la habitación:\n" + e.getMessage(),
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnDeleteHabitacionActionPerformed
+
+    private void btnUpdateHabitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateHabitacionActionPerformed
+        // TODO add your handling code here:
+        int fila = tblHabitaciones.getSelectedRow();
+        
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Seleccioná una habitación para editar.",
+                "Sin selección",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Crear el objeto Habitacion con los datos de la fila
+        int id = Integer.parseInt(tblHabitaciones.getValueAt(fila, 0).toString());
+        String numero = tblHabitaciones.getValueAt(fila, 1).toString();
+        String tipo = tblHabitaciones.getValueAt(fila, 2).toString();
+        int capacidad = Integer.parseInt(tblHabitaciones.getValueAt(fila, 3).toString());
+        double precio = Double.parseDouble(tblHabitaciones.getValueAt(fila, 4).toString());
+        String estado = tblHabitaciones.getValueAt(fila, 5).toString();
+
+        Models.Habitacion h = new Models.Habitacion(id, numero, tipo, capacidad, precio, estado);
+
+        Views.VistaAddHabitacion vistaEditar = new Views.VistaAddHabitacion(h);
+        vistaEditar.setVisible(true);
+        vistaEditar.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_btnUpdateHabitacionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -201,7 +300,56 @@ public class VistaHabitacion extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void cargarTabla() {
+        
+        String[] columnas = {"id", "Numero", "Tipo", "Capacidad", "Precio", "Estado"};
 
+        // modelo de tabla
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+
+        try {
+            
+            List<Habitacion> lista = habitacionDao.findAll();
+
+            
+            for (Habitacion h : lista) {
+                Object[] fila = {
+                    h.getId(),
+                    h.getNumero(),
+                    h.getTipo(),
+                    h.getCapacidad(),
+                    h.getPrecioBase(), 
+                    h.getEstado()
+                };
+                modelo.addRow(fila);
+            }
+        } catch (Exception e) {
+            
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudieron cargar las habitaciones:\n" + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Aplica el modelo a la tabla
+        tblHabitaciones.setModel(modelo);
+
+       
+        if (tblHabitaciones.getColumnModel().getColumnCount() >= 6) {
+            tblHabitaciones.getColumnModel().getColumn(0).setPreferredWidth(40);  // ID
+            tblHabitaciones.getColumnModel().getColumn(1).setPreferredWidth(70);  // Número
+            tblHabitaciones.getColumnModel().getColumn(2).setPreferredWidth(120); // Tipo
+            tblHabitaciones.getColumnModel().getColumn(3).setPreferredWidth(90);  // Capacidad
+            tblHabitaciones.getColumnModel().getColumn(4).setPreferredWidth(90);  // Precio
+            tblHabitaciones.getColumnModel().getColumn(5).setPreferredWidth(110); // Estado
+        }
+    }
+    
+    private Models.Dao.HabitacionDao habitacionDao;
+    
+    
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddHabitacion;
     private javax.swing.JButton btnDeleteHabitacion;

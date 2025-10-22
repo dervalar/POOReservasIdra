@@ -32,9 +32,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="lblAddPer" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="btnCancelarPersona1" min="-2" pref="180" max="-2" attributes="0"/>
+                      <Component id="btnGuardarHabitacion" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace pref="28" max="32767" attributes="0"/>
-                      <Component id="btnCancelarPersona" min="-2" pref="180" max="-2" attributes="0"/>
+                      <Component id="btnCancelarHabitacion" min="-2" pref="180" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -68,12 +68,12 @@
                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="inpEstado" pref="292" max="32767" attributes="0"/>
-                          <Component id="inpPrecioBase" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="inpPrecioBase" pref="292" max="32767" attributes="0"/>
                           <Component id="inpCapacidad" max="32767" attributes="0"/>
                           <Component id="inpTipo" max="32767" attributes="0"/>
                           <Component id="inpNumero" max="32767" attributes="0"/>
+                          <Component id="cmbEstado" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -109,12 +109,12 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lblEstado" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="inpEstado" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="cmbEstado" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnCancelarPersona" alignment="3" min="-2" pref="69" max="-2" attributes="0"/>
-                  <Component id="btnCancelarPersona1" alignment="3" min="-2" pref="69" max="-2" attributes="0"/>
+                  <Component id="btnCancelarHabitacion" alignment="3" min="-2" pref="69" max="-2" attributes="0"/>
+                  <Component id="btnGuardarHabitacion" alignment="3" min="-2" pref="69" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -218,16 +218,7 @@
         <Property name="name" type="java.lang.String" value="" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="inpEstado">
-      <Properties>
-        <Property name="toolTipText" type="java.lang.String" value="Escriba el TELEFONO de la persona a a&#xf1;adir"/>
-        <Property name="name" type="java.lang.String" value="inpNombre" noResource="true"/>
-      </Properties>
-      <AccessibilityProperties>
-        <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="Escriba el DNI de la persona a a&#xf1;adir"/>
-      </AccessibilityProperties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnCancelarPersona">
+    <Component class="javax.swing.JButton" name="btnCancelarHabitacion">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Console" size="24" style="1"/>
@@ -235,16 +226,19 @@
         <Property name="text" type="java.lang.String" value="CANCELAR"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelarPersonaActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelarHabitacionActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnCancelarPersona1">
+    <Component class="javax.swing.JButton" name="btnGuardarHabitacion">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Console" size="30" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="GUARDAR"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarHabitacionActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="inpPrecioBase">
       <Properties>
@@ -269,6 +263,17 @@
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="name" type="java.lang.String" value="" noResource="true"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cmbEstado">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

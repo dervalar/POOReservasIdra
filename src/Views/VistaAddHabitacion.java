@@ -4,6 +4,9 @@
  */
 package Views;
 
+import Models.Dao.DaoException;
+import Models.Dao.HabitacionDao;
+import Models.Habitacion;
 /**
  *
  * @author lisan
@@ -15,6 +18,29 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
      */
     public VistaAddHabitacion() {
         initComponents();
+        cmbEstado.addItem("DISPONIBLE");
+        cmbEstado.addItem("OCUPADA");
+        setLocationRelativeTo(null);
+        setTitle("Agregar Habitación");
+    }
+    
+    private Models.Habitacion editando; // guardamos la que se va a editar
+
+    public VistaAddHabitacion(Models.Habitacion habitacion) {
+        initComponents();
+        cmbEstado.addItem("DISPONIBLE");
+        cmbEstado.addItem("OCUPADA");
+        setLocationRelativeTo(null);
+        setTitle("Editar Habitación");
+
+        this.editando = habitacion;
+
+        // cargar datos en los inputs
+        inpNumero.setText(habitacion.getNumero());
+        inpTipo.setText(habitacion.getTipo());
+        inpCapacidad.setText(String.valueOf(habitacion.getCapacidad()));
+        inpPrecioBase.setText(String.valueOf(habitacion.getPrecioBase()));
+        cmbEstado.setSelectedItem(habitacion.getEstado());
     }
 
     /**
@@ -34,11 +60,11 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         lblCapacidad = new javax.swing.JLabel();
         inpCapacidad = new javax.swing.JTextField();
         lblEstado = new javax.swing.JLabel();
-        inpEstado = new javax.swing.JTextField();
-        btnCancelarPersona = new javax.swing.JButton();
-        btnCancelarPersona1 = new javax.swing.JButton();
+        btnCancelarHabitacion = new javax.swing.JButton();
+        btnGuardarHabitacion = new javax.swing.JButton();
         inpPrecioBase = new javax.swing.JTextField();
         lblPrecioBase = new javax.swing.JLabel();
+        cmbEstado = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AGREGAR PERSONA");
@@ -95,19 +121,21 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         lblEstado.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblEstado.setName(""); // NOI18N
 
-        inpEstado.setToolTipText("Escriba el TELEFONO de la persona a añadir");
-        inpEstado.setName("inpNombre"); // NOI18N
-
-        btnCancelarPersona.setFont(new java.awt.Font("Lucida Console", 1, 24)); // NOI18N
-        btnCancelarPersona.setText("CANCELAR");
-        btnCancelarPersona.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelarHabitacion.setFont(new java.awt.Font("Lucida Console", 1, 24)); // NOI18N
+        btnCancelarHabitacion.setText("CANCELAR");
+        btnCancelarHabitacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarPersonaActionPerformed(evt);
+                btnCancelarHabitacionActionPerformed(evt);
             }
         });
 
-        btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 30)); // NOI18N
-        btnCancelarPersona1.setText("GUARDAR");
+        btnGuardarHabitacion.setFont(new java.awt.Font("Lucida Console", 1, 30)); // NOI18N
+        btnGuardarHabitacion.setText("GUARDAR");
+        btnGuardarHabitacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarHabitacionActionPerformed(evt);
+            }
+        });
 
         inpPrecioBase.setToolTipText("Escriba el TELEFONO de la persona a añadir");
         inpPrecioBase.setName("inpNombre"); // NOI18N
@@ -125,6 +153,8 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         lblPrecioBase.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblPrecioBase.setName(""); // NOI18N
 
+        cmbEstado.setToolTipText("");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -134,9 +164,9 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblAddPer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCancelarPersona1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnGuardarHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                        .addComponent(btnCancelarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnCancelarHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -159,12 +189,12 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(inpEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                            .addComponent(inpPrecioBase)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(inpPrecioBase, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
                             .addComponent(inpCapacidad)
                             .addComponent(inpTipo)
-                            .addComponent(inpNumero))))
+                            .addComponent(inpNumero)
+                            .addComponent(cmbEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -191,16 +221,15 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(inpEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
+                    .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancelarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancelarPersona1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCancelarHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGuardarHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         inpNumero.getAccessibleContext().setAccessibleName("Nombre");
-        inpEstado.getAccessibleContext().setAccessibleDescription("Escriba el DNI de la persona a añadir");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -213,14 +242,90 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_inpPrecioBaseActionPerformed
 
-    private void btnCancelarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarPersonaActionPerformed
+    private void btnCancelarHabitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarHabitacionActionPerformed
         // TODO add your handling code here:
         VistaHabitacion vHabitacion = new VistaHabitacion();
         vHabitacion.setVisible(true);
         vHabitacion.setLocationRelativeTo(null);
         
         this.dispose();
-    }//GEN-LAST:event_btnCancelarPersonaActionPerformed
+    }//GEN-LAST:event_btnCancelarHabitacionActionPerformed
+
+    private void btnGuardarHabitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarHabitacionActionPerformed
+        // TODO add your handling code here:
+        
+        if (inpNumero.getText().trim().isEmpty() || inpTipo.getText().trim().isEmpty() || inpCapacidad.getText().trim().isEmpty() || inpPrecioBase.getText().trim().isEmpty()) {
+
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Por favor completá todos los campos antes de guardar.",
+                "Campos vacíos",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+           
+            String numero = inpNumero.getText().trim();
+            String tipo = inpTipo.getText().trim();
+            int capacidad = Integer.parseInt(inpCapacidad.getText().trim());
+            double precioBase = Double.parseDouble(inpPrecioBase.getText().trim());
+            String estado = cmbEstado.getSelectedItem().toString();
+            
+            Models.Dao.HabitacionDao dao = Models.Dao.HabitacionDao.getInstance();
+            if (editando != null) {
+                editando.setNumero(numero);
+                editando.setTipo(tipo);
+                editando.setCapacidad(capacidad);
+                editando.setPrecioBase(precioBase);
+                editando.setEstado(estado);
+                
+                dao.update(editando);
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Habitación actualizada correctamente.",
+                    "Éxito",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                
+                Views.VistaHabitacion vista = new Views.VistaHabitacion();
+                vista.setVisible(true);
+                vista.setLocationRelativeTo(null);
+                this.dispose();
+            } else{
+                // objeto modelo
+                Habitacion nueva = new Habitacion();
+                nueva.setNumero(numero);
+                nueva.setTipo(tipo);
+                nueva.setCapacidad(capacidad);
+                nueva.setPrecioBase(precioBase);
+                nueva.setEstado(estado);
+
+                
+                dao.save(nueva);
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Habitación agregada correctamente.",
+                    "Éxito",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                Views.VistaHabitacion vista = new Views.VistaHabitacion();
+                vista.setVisible(true);
+                vista.setLocationRelativeTo(null);
+                this.dispose();
+            }
+            
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Capacidad y precio deben ser valores numéricos.",
+                "Formato inválido",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error al guardar la habitación:\n" + e.getMessage(),
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            
+        }
+    }//GEN-LAST:event_btnGuardarHabitacionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,10 +364,10 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelarPersona;
-    private javax.swing.JButton btnCancelarPersona1;
+    private javax.swing.JButton btnCancelarHabitacion;
+    private javax.swing.JButton btnGuardarHabitacion;
+    private javax.swing.JComboBox<String> cmbEstado;
     private javax.swing.JTextField inpCapacidad;
-    private javax.swing.JTextField inpEstado;
     private javax.swing.JTextField inpNumero;
     private javax.swing.JTextField inpPrecioBase;
     private javax.swing.JTextField inpTipo;

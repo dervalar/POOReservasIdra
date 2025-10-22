@@ -19,7 +19,7 @@ public class Habitacion {
 
     private String estado;
 
-    public Habitacion(int id, String nombre, String tipo, int capacidad, double precioBase, String estado) {
+    public Habitacion(int id, String numero, String tipo, int capacidad, double precioBase, String estado) {
         this.id = id;
         this.numero = numero;
         this.tipo = tipo;
@@ -27,6 +27,7 @@ public class Habitacion {
         this.precioBase = precioBase;
         this.estado = estado;
     }
+    public Habitacion(){}
 
     public int getId() {
     return id;

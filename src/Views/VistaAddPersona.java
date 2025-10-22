@@ -99,8 +99,9 @@ public class VistaAddPersona extends javax.swing.JFrame {
             }
         });
 
-        btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 34)); // NOI18N
-        btnCancelarPersona1.setText("AÑADIR");
+        btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 32)); // NOI18N
+        btnCancelarPersona1.setText("GUARDAR");
+        btnCancelarPersona1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
