@@ -4,6 +4,13 @@
  */
 package Views;
 
+import Models.Dao.DaoException;
+import Models.Reserva;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import Models.Dao.ReservaDao;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author lisan
@@ -15,6 +22,7 @@ public class VistaReservas extends javax.swing.JFrame {
      */
     public VistaReservas() {
         initComponents();
+        cargarTabla();
     }
 
     /**
@@ -42,23 +50,31 @@ public class VistaReservas extends javax.swing.JFrame {
 
         btnAddReserva.setFont(new java.awt.Font("Lucida Console", 1, 14)); // NOI18N
         btnAddReserva.setText("Crear Reserva");
+        btnAddReserva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddReservaActionPerformed(evt);
+            }
+        });
 
         btnUpdateReserva.setFont(new java.awt.Font("Lucida Console", 1, 14)); // NOI18N
         btnUpdateReserva.setText("Actualizar Reserva");
+        btnUpdateReserva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateReservaActionPerformed(evt);
+            }
+        });
 
+        tblReservas.setForeground(new java.awt.Color(0, 0, 0));
         tblReservas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "id", "Habitacion ID", "Persona ID", "Check in", "Check out", "Monto", "Estado"
+                "id", "Habitacion", "Persona DNI", "Check in", "Check out", "Monto", "Estado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, true, true, false, false, false, true
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -122,6 +138,19 @@ public class VistaReservas extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnMenu1ActionPerformed
 
+    private void btnAddReservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddReservaActionPerformed
+        // TODO add your handling code here:
+        VistaAddReservas vAddReservas = new VistaAddReservas();
+        vAddReservas.setVisible(true);
+        vAddReservas.setLocationRelativeTo(null);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnAddReservaActionPerformed
+
+    private void btnUpdateReservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateReservaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUpdateReservaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -156,6 +185,45 @@ public class VistaReservas extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void cargarTabla() {
+        String[] columnas = {"ID", "N° Habitación", "DNI Persona", "Check-In", "Check-Out", "Monto", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        try {
+            ReservaDao dao = ReservaDao.getInstance();
+            List<Reserva> lista = dao.findAll();
+
+            for (Reserva r : lista) {
+                Object[] fila = {
+                    r.getId(),
+                    r.getNumeroHabitacion(),
+                    r.getDniPersona(),
+                    r.getCheckIn(),
+                    r.getCheckOut(),
+                    r.getMonto(),
+                    r.getEstado()
+                };
+                modelo.addRow(fila);
+            }
+
+            tblReservas.setModel(modelo);
+
+        } catch (DaoException e) {
+            JOptionPane.showMessageDialog(this,
+                "Error al cargar reservas:\n" + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddReserva;

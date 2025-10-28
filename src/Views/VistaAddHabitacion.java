@@ -18,6 +18,10 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
      */
     public VistaAddHabitacion() {
         initComponents();
+        
+        cmbTipo.addItem("SIMPLE");
+        cmbTipo.addItem("DOBLE");
+        
         cmbEstado.addItem("DISPONIBLE");
         cmbEstado.addItem("OCUPADA");
         setLocationRelativeTo(null);
@@ -28,8 +32,12 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
 
     public VistaAddHabitacion(Models.Habitacion habitacion) {
         initComponents();
+        cmbTipo.addItem("SIMPLE");
+        cmbTipo.addItem("DOBLE");
+        
         cmbEstado.addItem("DISPONIBLE");
         cmbEstado.addItem("OCUPADA");
+        
         setLocationRelativeTo(null);
         setTitle("Editar Habitación");
 
@@ -37,7 +45,7 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
 
         // cargar datos en los inputs
         inpNumero.setText(habitacion.getNumero());
-        inpTipo.setText(habitacion.getTipo());
+        cmbTipo.setSelectedItem(habitacion.getTipo());
         inpCapacidad.setText(String.valueOf(habitacion.getCapacidad()));
         inpPrecioBase.setText(String.valueOf(habitacion.getPrecioBase()));
         cmbEstado.setSelectedItem(habitacion.getEstado());
@@ -56,7 +64,6 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         inpNumero = new javax.swing.JTextField();
         lblNumero = new javax.swing.JLabel();
         lblTipo = new javax.swing.JLabel();
-        inpTipo = new javax.swing.JTextField();
         lblCapacidad = new javax.swing.JLabel();
         inpCapacidad = new javax.swing.JTextField();
         lblEstado = new javax.swing.JLabel();
@@ -65,6 +72,7 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         inpPrecioBase = new javax.swing.JTextField();
         lblPrecioBase = new javax.swing.JLabel();
         cmbEstado = new javax.swing.JComboBox<>();
+        cmbTipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AGREGAR PERSONA");
@@ -93,9 +101,6 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         lblTipo.setToolTipText("");
         lblTipo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblTipo.setName(""); // NOI18N
-
-        inpTipo.setToolTipText("Escriba el MAIL de la persona a añadir");
-        inpTipo.setName("inpNombre"); // NOI18N
 
         lblCapacidad.setFont(new java.awt.Font("Lucida Console", 1, 12)); // NOI18N
         lblCapacidad.setForeground(new java.awt.Color(0, 0, 0));
@@ -192,9 +197,9 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(inpPrecioBase, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
                             .addComponent(inpCapacidad)
-                            .addComponent(inpTipo)
                             .addComponent(inpNumero)
-                            .addComponent(cmbEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(cmbEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmbTipo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -207,9 +212,9 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
                     .addComponent(inpNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(inpTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(cmbTipo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(inpCapacidad, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -254,7 +259,7 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
     private void btnGuardarHabitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarHabitacionActionPerformed
         // TODO add your handling code here:
         
-        if (inpNumero.getText().trim().isEmpty() || inpTipo.getText().trim().isEmpty() || inpCapacidad.getText().trim().isEmpty() || inpPrecioBase.getText().trim().isEmpty()) {
+        if (inpNumero.getText().trim().isEmpty() || inpCapacidad.getText().trim().isEmpty() || inpPrecioBase.getText().trim().isEmpty()) {
 
             javax.swing.JOptionPane.showMessageDialog(this,
                 "Por favor completá todos los campos antes de guardar.",
@@ -265,7 +270,7 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         try {
            
             String numero = inpNumero.getText().trim();
-            String tipo = inpTipo.getText().trim();
+            String tipo = cmbTipo.getSelectedItem().toString();
             int capacidad = Integer.parseInt(inpCapacidad.getText().trim());
             double precioBase = Double.parseDouble(inpPrecioBase.getText().trim());
             String estado = cmbEstado.getSelectedItem().toString();
@@ -367,10 +372,10 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelarHabitacion;
     private javax.swing.JButton btnGuardarHabitacion;
     private javax.swing.JComboBox<String> cmbEstado;
+    private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JTextField inpCapacidad;
     private javax.swing.JTextField inpNumero;
     private javax.swing.JTextField inpPrecioBase;
-    private javax.swing.JTextField inpTipo;
     private javax.swing.JLabel lblAddPer;
     private javax.swing.JLabel lblCapacidad;
     private javax.swing.JLabel lblEstado;

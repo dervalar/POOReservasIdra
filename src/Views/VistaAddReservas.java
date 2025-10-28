@@ -4,6 +4,15 @@
  */
 package Views;
 
+import Models.Dao.DaoException;
+import Models.Dao.HabitacionDao;
+import Models.Dao.PersonasDao;
+import Models.Dao.ReservaDao;
+import Models.Habitacion;
+import Models.Persona;
+import Models.Reserva;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author lisan
@@ -15,6 +24,29 @@ public class VistaAddReservas extends javax.swing.JFrame {
      */
     public VistaAddReservas() {
         initComponents();
+        
+         cargarPersonas();
+        cargarHabitaciones();
+
+        // 🔹 Listener para mostrar nombre al seleccionar persona
+        cbPersona.addActionListener(e -> mostrarNombrePersona());
+
+        // 🔹 Listener para mostrar precio al seleccionar habitación
+        cbHabitacion.addActionListener(e -> {
+            mostrarPrecioHabitacion();
+            calcularMonto(); // también recalculamos el total
+        });
+
+        // 🔹 Listeners para recalcular monto al cambiar fechas
+        dcCheckIn.addPropertyChangeListener(e -> {
+            if ("date".equals(e.getPropertyName())) calcularMonto();
+        });
+        dcCheckOut.addPropertyChangeListener(e -> {
+            if ("date".equals(e.getPropertyName())) calcularMonto();
+        });
+
+        // 🔹 Dejamos el campo de precio solo lectura
+        txtPrecio.setEditable(false);
     }
 
     /**
@@ -26,18 +58,37 @@ public class VistaAddReservas extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        btnCancelar = new javax.swing.JButton();
+        pnPersona = new javax.swing.JPanel();
+        jlbPersona = new javax.swing.JLabel();
+        cbPersona = new javax.swing.JComboBox<>();
+        lblNombre = new javax.swing.JLabel();
+        lblNombre1 = new javax.swing.JLabel();
+        pnHabitacion = new javax.swing.JPanel();
+        lblHabitacion = new javax.swing.JLabel();
+        cbHabitacion = new javax.swing.JComboBox<>();
+        lblNombre3 = new javax.swing.JLabel();
+        lblPrecio = new javax.swing.JLabel();
+        txtPrecio = new javax.swing.JTextField();
+        lblMonto1 = new javax.swing.JLabel();
+        cbEstado = new javax.swing.JComboBox<>();
+        pnFechas = new javax.swing.JPanel();
+        lblCheckIn = new javax.swing.JLabel();
+        lblCheckOut = new javax.swing.JLabel();
+        dcCheckIn = new com.toedter.calendar.JDateChooser();
+        dcCheckOut = new com.toedter.calendar.JDateChooser();
+        lblMonto = new javax.swing.JLabel();
+        txtMonto = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setFont(new java.awt.Font("Franklin Gothic Medium", 0, 18)); // NOI18N
-        jButton1.setText("Añadir Reserva");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnGuardar.setFont(new java.awt.Font("Franklin Gothic Medium", 0, 18)); // NOI18N
+        btnGuardar.setText("GUARDAR");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnGuardarActionPerformed(evt);
             }
         });
 
@@ -46,90 +97,493 @@ public class VistaAddReservas extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("CREAR RESERVA");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Habitación", "Capacidad", "Persona", "Check Out"
+        btnCancelar.setFont(new java.awt.Font("Franklin Gothic Medium", 0, 18)); // NOI18N
+        btnCancelar.setText("CANCELAR");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        });
+
+        pnPersona.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnPersona.setForeground(new java.awt.Color(0, 0, 0));
+        pnPersona.setName("Datos de Persona"); // NOI18N
+
+        jlbPersona.setForeground(new java.awt.Color(0, 0, 0));
+        jlbPersona.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlbPersona.setText("Seleccionar Persona:");
+        jlbPersona.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        cbPersona.setForeground(new java.awt.Color(0, 0, 0));
+
+        javax.swing.GroupLayout pnPersonaLayout = new javax.swing.GroupLayout(pnPersona);
+        pnPersona.setLayout(pnPersonaLayout);
+        pnPersonaLayout.setHorizontalGroup(
+            pnPersonaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnPersonaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jlbPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnPersonaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbPersona, 0, 285, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(pnPersonaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnPersonaLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(lblNombre1)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        pnPersonaLayout.setVerticalGroup(
+            pnPersonaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnPersonaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnPersonaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jlbPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
+            .addGroup(pnPersonaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnPersonaLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(lblNombre1)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        pnHabitacion.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnHabitacion.setForeground(new java.awt.Color(0, 0, 0));
+        pnHabitacion.setName("Datos de Persona"); // NOI18N
+
+        lblHabitacion.setForeground(new java.awt.Color(0, 0, 0));
+        lblHabitacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblHabitacion.setText("Seleccionar Habitacion:");
+        lblHabitacion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        cbHabitacion.setForeground(new java.awt.Color(0, 0, 0));
+
+        lblPrecio.setForeground(new java.awt.Color(0, 0, 0));
+        lblPrecio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrecio.setText("Precio por noche:");
+        lblPrecio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        txtPrecio.setEditable(false);
+        txtPrecio.setForeground(new java.awt.Color(0, 0, 0));
+        txtPrecio.setToolTipText("Precio por noche");
+
+        lblMonto1.setForeground(new java.awt.Color(0, 0, 0));
+        lblMonto1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMonto1.setText("Estado:");
+        lblMonto1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        cbEstado.setForeground(new java.awt.Color(0, 0, 0));
+        cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PENDIENTE", "PAGADA", "CANCELADA" }));
+
+        javax.swing.GroupLayout pnHabitacionLayout = new javax.swing.GroupLayout(pnHabitacion);
+        pnHabitacion.setLayout(pnHabitacionLayout);
+        pnHabitacionLayout.setHorizontalGroup(
+            pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnHabitacionLayout.createSequentialGroup()
+                .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblMonto1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnHabitacionLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(lblHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(pnHabitacionLayout.createSequentialGroup()
+                            .addGap(47, 47, 47)
+                            .addComponent(lblPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cbHabitacion, 0, 285, Short.MAX_VALUE)
+                    .addComponent(txtPrecio)
+                    .addComponent(cbEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnHabitacionLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(lblNombre3)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        pnHabitacionLayout.setVerticalGroup(
+            pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnHabitacionLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMonto1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(29, Short.MAX_VALUE))
+            .addGroup(pnHabitacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnHabitacionLayout.createSequentialGroup()
+                    .addGap(0, 56, Short.MAX_VALUE)
+                    .addComponent(lblNombre3)
+                    .addGap(0, 56, Short.MAX_VALUE)))
+        );
+
+        pnFechas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnFechas.setForeground(new java.awt.Color(0, 0, 0));
+        pnFechas.setName("Datos de Persona"); // NOI18N
+
+        lblCheckIn.setForeground(new java.awt.Color(0, 0, 0));
+        lblCheckIn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCheckIn.setText("Check In");
+        lblCheckIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        lblCheckOut.setForeground(new java.awt.Color(0, 0, 0));
+        lblCheckOut.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCheckOut.setText("Check Out");
+        lblCheckOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        dcCheckOut.setForeground(new java.awt.Color(0, 0, 0));
+
+        lblMonto.setForeground(new java.awt.Color(0, 0, 0));
+        lblMonto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblMonto.setText("MONTO TOTAL:");
+        lblMonto.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        txtMonto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMontoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnFechasLayout = new javax.swing.GroupLayout(pnFechas);
+        pnFechas.setLayout(pnFechasLayout);
+        pnFechasLayout.setHorizontalGroup(
+            pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnFechasLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblCheckIn, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCheckOut, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(dcCheckIn, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                    .addComponent(dcCheckOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtMonto))
+                .addContainerGap())
+        );
+        pnFechasLayout.setVerticalGroup(
+            pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnFechasLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblCheckIn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dcCheckIn, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblCheckOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dcCheckOut, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnFechasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMonto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(60, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(190, 190, 190))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(64, 64, 64))))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(64, 64, 64))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(pnFechas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnPersona, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnHabitacion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnHabitacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnFechas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+        // Validaciones básicas
+        if (cbPersona.getSelectedItem() == null ||
+            cbHabitacion.getSelectedItem() == null ||
+            dcCheckIn.getDate() == null ||
+            dcCheckOut.getDate() == null ||
+            txtMonto.getText().isBlank()) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Por favor complete todos los campos.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Convertir fechas
+        java.sql.Date checkIn = new java.sql.Date(dcCheckIn.getDate().getTime());
+        java.sql.Date checkOut = new java.sql.Date(dcCheckOut.getDate().getTime());
+
+        // Crear objeto reserva
+        Reserva r = new Reserva();
+        r.setHabitacionId(buscarIdHabitacion(cbHabitacion.getSelectedItem().toString()));
+        r.setPersonaId(buscarIdPersona(cbPersona.getSelectedItem().toString()));
+        r.setCheckIn(checkIn);
+        r.setCheckOut(checkOut);
+        r.setMonto(Double.parseDouble(txtMonto.getText().replace(",", ".")));
+        r.setEstado(cbEstado.getSelectedItem().toString());
+
+        // Guardar en BD
+        ReservaDao dao = ReservaDao.getInstance();
+        dao.save(r);
+
+        JOptionPane.showMessageDialog(this,
+                "Reserva guardada exitosamente.",
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        this.dispose(); // Cierra la ventana actual
+        new VistaReservas().setVisible(true); // Vuelve a la vista principal
+
+        } catch (DaoException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al guardar la reserva:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error inesperado:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        VistaReservas vReservas = new VistaReservas();
+        vReservas.setVisible(true);
+        vReservas.setLocationRelativeTo(null);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtMontoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMontoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMontoActionPerformed
+    
+    private int buscarIdPersona(String dni) throws DaoException {
+        PersonasDao personaDao = PersonasDao.getInstance();
+        for (Persona p : personaDao.findAll()) {
+            if (p.getDni().equals(dni)) {
+                return p.getId();
+            }
+        }
+        throw new DaoException("No se encontró la persona con DNI: " + dni);
+    }
+
+    private int buscarIdHabitacion(String numero) throws DaoException {
+        HabitacionDao habitacionDao = HabitacionDao.getInstance();
+        for (Habitacion h : habitacionDao.findAll()) {
+            if (h.getNumero().equals(numero)) {
+                return h.getId();
+            }
+        }
+        throw new DaoException("No se encontró la habitación con número: " + numero);
+    }
+    
+    private void calcularMonto() {
+        try {
+            if (cbHabitacion.getSelectedItem() == null ||
+                dcCheckIn.getDate() == null ||
+                dcCheckOut.getDate() == null) {
+                return;
+            }
+
+            long diffMillis = dcCheckOut.getDate().getTime() - dcCheckIn.getDate().getTime();
+            int dias = (int) (diffMillis / (1000 * 60 * 60 * 24));
+
+            if (dias <= 0) {
+                txtMonto.setText("");
+                return;
+            }
+
+            HabitacionDao habitacionDao = HabitacionDao.getInstance();
+            double precioBase = 0;
+
+            for (Habitacion h : habitacionDao.findAll()) {
+                if (h.getNumero().equals(cbHabitacion.getSelectedItem().toString())) {
+                    precioBase = h.getPrecioBase();
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VistaAddReservas().setVisible(true);
-            }
-        });
+            double total = precioBase * dias;
+            txtMonto.setText(String.format("%.2f", total));
+
+        } catch (Exception e) {
+            System.err.println("Error al calcular monto: " + e.getMessage());
+        }
     }
 
+    private void cargarPersonas() {
+        try {
+            PersonasDao personaDao = PersonasDao.getInstance();
+            cbPersona.removeAllItems();
+            for (Persona p : personaDao.findAll()) {
+                cbPersona.addItem(p.getDni()); // muestra DNI
+            }
+        } catch (DaoException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar personas: " + e.getMessage());
+        }
+    }
+
+    private void cargarHabitaciones() {
+        try {
+            HabitacionDao habitacionDao = HabitacionDao.getInstance();
+            cbHabitacion.removeAllItems();
+            for (Habitacion h : habitacionDao.findAll()) {
+                cbHabitacion.addItem(h.getNumero()); // muestra número
+            }
+        } catch (DaoException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar habitaciones: " + e.getMessage());
+        }
+    }
+
+    private void mostrarNombrePersona() {
+        try {
+            if (cbPersona.getSelectedItem() == null) {
+                lblNombre.setText("—");
+                return;
+            }
+
+            String dni = cbPersona.getSelectedItem().toString();
+            PersonasDao personaDao = PersonasDao.getInstance();
+
+            for (Persona p : personaDao.findAll()) {
+                if (p.getDni().equals(dni)) {
+                    lblNombre.setText(p.getNombre());
+                    return;
+                }
+            }
+
+            lblNombre.setText("No encontrado");
+
+        } catch (DaoException e) {
+            lblNombre.setText("Error");
+            System.err.println("Error al mostrar nombre: " + e.getMessage());
+        }
+    }
+
+    private void mostrarPrecioHabitacion() {
+        try {
+            if (cbHabitacion.getSelectedItem() == null) {
+                txtPrecio.setText("");
+                return;
+            }
+
+            String numero = cbHabitacion.getSelectedItem().toString();
+            HabitacionDao habitacionDao = HabitacionDao.getInstance();
+
+            for (Habitacion h : habitacionDao.findAll()) {
+                if (h.getNumero().equals(numero)) {
+                    txtPrecio.setText(String.valueOf(h.getPrecioBase()));
+                    return;
+                }
+            }
+
+            txtPrecio.setText("No encontrado");
+
+        } catch (DaoException e) {
+            txtPrecio.setText("Error");
+            System.err.println("Error al mostrar precio: " + e.getMessage());
+        }
+    }
+
+
+/**
+ * @param args the command line arguments
+ */
+public static void main(String args[]) {
+    /* Set the Nimbus look and feel */
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+     */
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
+            }
+        }
+    } catch (ClassNotFoundException ex) {
+        java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (InstantiationException ex) {
+        java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (IllegalAccessException ex) {
+        java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(VistaAddReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    }
+    //</editor-fold>
+
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new VistaAddReservas().setVisible(true);
+        }
+    });
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JComboBox<String> cbEstado;
+    private javax.swing.JComboBox<String> cbHabitacion;
+    private javax.swing.JComboBox<String> cbPersona;
+    private com.toedter.calendar.JDateChooser dcCheckIn;
+    private com.toedter.calendar.JDateChooser dcCheckOut;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel jlbPersona;
+    private javax.swing.JLabel lblCheckIn;
+    private javax.swing.JLabel lblCheckOut;
+    private javax.swing.JLabel lblHabitacion;
+    private javax.swing.JLabel lblMonto;
+    private javax.swing.JLabel lblMonto1;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblNombre1;
+    private javax.swing.JLabel lblNombre3;
+    private javax.swing.JLabel lblPrecio;
+    private javax.swing.JPanel pnFechas;
+    private javax.swing.JPanel pnHabitacion;
+    private javax.swing.JPanel pnPersona;
+    private javax.swing.JTextField txtMonto;
+    private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
 }

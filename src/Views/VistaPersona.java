@@ -4,6 +4,13 @@
  */
 package Views;
 
+import Models.Dao.DaoException;
+import Models.Dao.PersonasDao;
+import Models.Persona;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author lisan
@@ -15,6 +22,16 @@ public class VistaPersona extends javax.swing.JFrame {
      */
     public VistaPersona() {
         initComponents();
+        try {
+        personasDao = PersonasDao.getInstance();
+        cargarTabla();
+    } catch (DaoException ex) {
+        Logger.getLogger(VistaPersona.class.getName()).log(Level.SEVERE, null, ex);
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "Error al conectar con la base de datos:\n" + ex.getMessage(),
+            "Error",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
     }
 
     /**
@@ -40,21 +57,28 @@ public class VistaPersona extends javax.swing.JFrame {
         setName("VPersonas"); // NOI18N
 
         tblPersonas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        tblPersonas.setForeground(new java.awt.Color(255, 255, 204));
+        tblPersonas.setForeground(new java.awt.Color(0, 0, 0));
         tblPersonas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "id", "Nombre", "Mail", "Telefono", "DNI"
+                "id", "Nombre", "Email", "Telefono", "DNI"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(tblPersonas);
@@ -73,11 +97,21 @@ public class VistaPersona extends javax.swing.JFrame {
         btnDeletePersona.setText("BORRAR PERSONA");
         btnDeletePersona.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btnDeletePersona.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnDeletePersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeletePersonaActionPerformed(evt);
+            }
+        });
 
         btnUpdatePersona.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 1, 24)); // NOI18N
         btnUpdatePersona.setText("ACTUALIZAR PERSONA");
         btnUpdatePersona.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btnUpdatePersona.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnUpdatePersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdatePersonaActionPerformed(evt);
+            }
+        });
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 204));
         jLabel1.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 1, 36)); // NOI18N
@@ -105,13 +139,15 @@ public class VistaPersona extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(199, 199, 199)
-                        .addComponent(btnMenu1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAddPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(152, 152, 152)
-                        .addComponent(btnDeletePersona, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnAddPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(152, 152, 152)
+                                .addComponent(btnDeletePersona, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(199, 199, 199)
+                                .addComponent(btnMenu1)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -126,7 +162,7 @@ public class VistaPersona extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(btnMenu1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAddPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDeletePersona, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -156,6 +192,79 @@ public class VistaPersona extends javax.swing.JFrame {
         
         this.dispose();
     }//GEN-LAST:event_btnMenu1ActionPerformed
+
+    private void btnDeletePersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeletePersonaActionPerformed
+        // TODO add your handling code here:
+        int filaSeleccionada = tblPersonas.getSelectedRow();
+
+        if (filaSeleccionada == -1) {
+            // Ninguna fila seleccionada
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Por favor, seleccioná una persona para borrar.",
+                "Sin selección",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        
+        int idPersona = Integer.parseInt(tblPersonas.getValueAt(filaSeleccionada, 0).toString());
+        String nombrePersona = tblPersonas.getValueAt(filaSeleccionada, 1).toString();
+        String dniPersona = tblPersonas.getValueAt(filaSeleccionada, 4).toString();
+
+        // Confirmación del usuario
+        int opcion = javax.swing.JOptionPane.showConfirmDialog(this,
+            "¿Seguro que querés borrar a la persona " + nombrePersona + "D.N.I:" + dniPersona + "?",
+            "Confirmar eliminación",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+
+        if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                
+                personasDao.delete(idPersona);  // tu método deleteById o similar
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Persona borrada correctamente.",
+                    "Éxito",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                // Refrescar tabla
+                cargarTabla();
+
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error al borrar la persona:\n" + e.getMessage(),
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnDeletePersonaActionPerformed
+
+    private void btnUpdatePersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdatePersonaActionPerformed
+        // TODO add your handling code here:
+        int fila = tblPersonas.getSelectedRow();
+        
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Seleccioná una persona para editar.",
+                "Sin selección",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Crear el objeto Persona con los datos de la fila
+        int id = Integer.parseInt(tblPersonas.getValueAt(fila, 0).toString());
+        String nombre = tblPersonas.getValueAt(fila, 1).toString();
+        String email = tblPersonas.getValueAt(fila, 2).toString();
+        String telefono = tblPersonas.getValueAt(fila, 3).toString();
+        String dni = tblPersonas.getValueAt(fila, 4).toString();
+
+        Models.Persona p = new Models.Persona(id, dni, nombre, email, telefono);
+
+        Views.VistaAddPersona vistaEditar = new Views.VistaAddPersona(p);
+        vistaEditar.setVisible(true);
+        vistaEditar.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_btnUpdatePersonaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -192,6 +301,53 @@ public class VistaPersona extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void cargarTabla() {
+        
+        String[] columnas = {"id", "Nombre", "Email", "Telefono", "DNI"};
+
+        // modelo de tabla
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+
+        try {
+            
+            personasDao.getInstance();
+            List<Persona> lista = personasDao.findAll();
+
+
+            
+            for (Persona p : lista) {
+                Object[] fila = {
+                    p.getId(),
+                    p.getNombre(),
+                    p.getEmail(),
+                    p.getTelefono(),
+                    p.getDni()
+                };
+                modelo.addRow(fila);
+            }
+        } catch (Exception e) {
+            
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudieron cargar las personas:\n" + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Aplica el modelo a la tabla
+        tblPersonas.setModel(modelo);
+
+       
+        if (tblPersonas.getColumnModel().getColumnCount() >= 6) {
+            tblPersonas.getColumnModel().getColumn(0).setPreferredWidth(40);  // ID
+            tblPersonas.getColumnModel().getColumn(1).setPreferredWidth(70);  // Nombre
+            tblPersonas.getColumnModel().getColumn(2).setPreferredWidth(120); // Email
+            tblPersonas.getColumnModel().getColumn(3).setPreferredWidth(90);  // Telefono
+            tblPersonas.getColumnModel().getColumn(4).setPreferredWidth(90);  // Dni
+        }
+    }
+    
+    private Models.Dao.PersonasDao personasDao;
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddPersona;

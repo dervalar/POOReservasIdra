@@ -71,9 +71,9 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="inpPrecioBase" pref="292" max="32767" attributes="0"/>
                           <Component id="inpCapacidad" max="32767" attributes="0"/>
-                          <Component id="inpTipo" max="32767" attributes="0"/>
                           <Component id="inpNumero" max="32767" attributes="0"/>
                           <Component id="cmbEstado" alignment="0" max="32767" attributes="0"/>
+                          <Component id="cmbTipo" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -92,9 +92,9 @@
                   <Component id="lblNumero" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="inpTipo" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="lblTipo" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="lblTipo" pref="35" max="32767" attributes="0"/>
+                  <Component id="cmbTipo" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
@@ -171,12 +171,6 @@
         <Property name="toolTipText" type="java.lang.String" value=""/>
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="name" type="java.lang.String" value="" noResource="true"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="inpTipo">
-      <Properties>
-        <Property name="toolTipText" type="java.lang.String" value="Escriba el MAIL de la persona a a&#xf1;adir"/>
-        <Property name="name" type="java.lang.String" value="inpNombre" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblCapacidad">
@@ -270,6 +264,16 @@
           <StringArray count="0"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value=""/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cmbTipo">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

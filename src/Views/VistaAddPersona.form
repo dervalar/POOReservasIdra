@@ -39,21 +39,21 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="lblMail1" min="-2" pref="78" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="inpMail1" max="32767" attributes="0"/>
+                      <Component id="inpEmail" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="lblTelefono1" min="-2" pref="78" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="inpMail2" max="32767" attributes="0"/>
+                      <Component id="inpTelefono" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="lblTelefono2" min="-2" pref="78" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="inpMail3" max="32767" attributes="0"/>
+                      <Component id="inpDni" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="10" max="32767" attributes="0"/>
-                      <Component id="btnCancelarPersona1" min="-2" pref="180" max="-2" attributes="0"/>
+                      <Component id="btnGuardarPersona" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="btnCancelarPersona" min="-2" pref="180" max="-2" attributes="0"/>
                   </Group>
@@ -74,23 +74,23 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="inpMail1" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="inpEmail" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="lblMail1" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="inpMail2" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="inpTelefono" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
                   <Component id="lblTelefono1" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lblTelefono2" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="inpMail3" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="inpDni" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="btnCancelarPersona" max="32767" attributes="0"/>
-                  <Component id="btnCancelarPersona1" pref="69" max="32767" attributes="0"/>
+                  <Component id="btnGuardarPersona" pref="69" max="32767" attributes="0"/>
               </Group>
               <EmptySpace pref="14" max="32767" attributes="0"/>
           </Group>
@@ -118,6 +118,9 @@
       <AccessibilityProperties>
         <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Nombre"/>
       </AccessibilityProperties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inpNombreActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="lblNombre">
       <Properties>
@@ -143,13 +146,13 @@
           <Color blue="0" green="0" red="0" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="MAIL"/>
+        <Property name="text" type="java.lang.String" value="EMAIL"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="name" type="java.lang.String" value="" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="inpMail1">
+    <Component class="javax.swing.JTextField" name="inpEmail">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" value="Escriba el MAIL de la persona a a&#xf1;adir"/>
         <Property name="name" type="java.lang.String" value="inpNombre" noResource="true"/>
@@ -170,7 +173,7 @@
         <Property name="name" type="java.lang.String" value="" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="inpMail2">
+    <Component class="javax.swing.JTextField" name="inpTelefono">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" value="Escriba el TELEFONO de la persona a a&#xf1;adir"/>
         <Property name="name" type="java.lang.String" value="inpNombre" noResource="true"/>
@@ -191,7 +194,7 @@
         <Property name="name" type="java.lang.String" value="" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="inpMail3">
+    <Component class="javax.swing.JTextField" name="inpDni">
       <Properties>
         <Property name="toolTipText" type="java.lang.String" value="Escriba el TELEFONO de la persona a a&#xf1;adir"/>
         <Property name="name" type="java.lang.String" value="inpNombre" noResource="true"/>
@@ -211,7 +214,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelarPersonaActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnCancelarPersona1">
+    <Component class="javax.swing.JButton" name="btnGuardarPersona">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Console" size="32" style="1"/>
@@ -219,6 +222,9 @@
         <Property name="text" type="java.lang.String" value="GUARDAR"/>
         <Property name="horizontalTextPosition" type="int" value="0"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarPersonaActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

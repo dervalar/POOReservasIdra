@@ -4,6 +4,10 @@
  */
 package Views;
 
+import Models.Dao.DaoException;
+import Models.Dao.PersonasDao;
+import Models.Persona;
+
 /**
  *
  * @author lisan
@@ -15,6 +19,22 @@ public class VistaAddPersona extends javax.swing.JFrame {
      */
     public VistaAddPersona() {
         initComponents();
+    }
+    
+    private Models.Persona editando;
+    public VistaAddPersona(Models.Persona Persona) {
+        initComponents();
+        
+        setLocationRelativeTo(null);
+        setTitle("Editar Persona");
+
+        this.editando = Persona;
+
+        // cargar datos en los inputs
+        inpNombre.setText(Persona.getNombre());
+        inpEmail.setText(Persona.getEmail());
+        inpTelefono.setText(Persona.getTelefono());
+        inpDni.setText(Persona.getDni());
     }
 
     /**
@@ -30,13 +50,13 @@ public class VistaAddPersona extends javax.swing.JFrame {
         inpNombre = new javax.swing.JTextField();
         lblNombre = new javax.swing.JLabel();
         lblMail1 = new javax.swing.JLabel();
-        inpMail1 = new javax.swing.JTextField();
+        inpEmail = new javax.swing.JTextField();
         lblTelefono1 = new javax.swing.JLabel();
-        inpMail2 = new javax.swing.JTextField();
+        inpTelefono = new javax.swing.JTextField();
         lblTelefono2 = new javax.swing.JLabel();
-        inpMail3 = new javax.swing.JTextField();
+        inpDni = new javax.swing.JTextField();
         btnCancelarPersona = new javax.swing.JButton();
-        btnCancelarPersona1 = new javax.swing.JButton();
+        btnGuardarPersona = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AGREGAR PERSONA");
@@ -49,6 +69,11 @@ public class VistaAddPersona extends javax.swing.JFrame {
 
         inpNombre.setToolTipText("Escriba el NOMBRE de la persona a añadir");
         inpNombre.setName("inpNombre"); // NOI18N
+        inpNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inpNombreActionPerformed(evt);
+            }
+        });
 
         lblNombre.setFont(new java.awt.Font("Lucida Console", 1, 18)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(0, 0, 0));
@@ -61,13 +86,13 @@ public class VistaAddPersona extends javax.swing.JFrame {
         lblMail1.setFont(new java.awt.Font("Lucida Console", 1, 18)); // NOI18N
         lblMail1.setForeground(new java.awt.Color(0, 0, 0));
         lblMail1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblMail1.setText("MAIL");
+        lblMail1.setText("EMAIL");
         lblMail1.setToolTipText("");
         lblMail1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblMail1.setName(""); // NOI18N
 
-        inpMail1.setToolTipText("Escriba el MAIL de la persona a añadir");
-        inpMail1.setName("inpNombre"); // NOI18N
+        inpEmail.setToolTipText("Escriba el MAIL de la persona a añadir");
+        inpEmail.setName("inpNombre"); // NOI18N
 
         lblTelefono1.setFont(new java.awt.Font("Lucida Console", 1, 14)); // NOI18N
         lblTelefono1.setForeground(new java.awt.Color(0, 0, 0));
@@ -77,8 +102,8 @@ public class VistaAddPersona extends javax.swing.JFrame {
         lblTelefono1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblTelefono1.setName(""); // NOI18N
 
-        inpMail2.setToolTipText("Escriba el TELEFONO de la persona a añadir");
-        inpMail2.setName("inpNombre"); // NOI18N
+        inpTelefono.setToolTipText("Escriba el TELEFONO de la persona a añadir");
+        inpTelefono.setName("inpNombre"); // NOI18N
 
         lblTelefono2.setFont(new java.awt.Font("Lucida Console", 1, 18)); // NOI18N
         lblTelefono2.setForeground(new java.awt.Color(0, 0, 0));
@@ -88,8 +113,8 @@ public class VistaAddPersona extends javax.swing.JFrame {
         lblTelefono2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblTelefono2.setName(""); // NOI18N
 
-        inpMail3.setToolTipText("Escriba el TELEFONO de la persona a añadir");
-        inpMail3.setName("inpNombre"); // NOI18N
+        inpDni.setToolTipText("Escriba el TELEFONO de la persona a añadir");
+        inpDni.setName("inpNombre"); // NOI18N
 
         btnCancelarPersona.setFont(new java.awt.Font("Lucida Console", 1, 24)); // NOI18N
         btnCancelarPersona.setText("CANCELAR");
@@ -99,9 +124,14 @@ public class VistaAddPersona extends javax.swing.JFrame {
             }
         });
 
-        btnCancelarPersona1.setFont(new java.awt.Font("Lucida Console", 1, 32)); // NOI18N
-        btnCancelarPersona1.setText("GUARDAR");
-        btnCancelarPersona1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGuardarPersona.setFont(new java.awt.Font("Lucida Console", 1, 32)); // NOI18N
+        btnGuardarPersona.setText("GUARDAR");
+        btnGuardarPersona.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGuardarPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarPersonaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,18 +148,18 @@ public class VistaAddPersona extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lblMail1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inpMail1))
+                        .addComponent(inpEmail))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTelefono1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inpMail2))
+                        .addComponent(inpTelefono))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblTelefono2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inpMail3))
+                        .addComponent(inpDni))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 10, Short.MAX_VALUE)
-                        .addComponent(btnCancelarPersona1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnGuardarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnCancelarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -145,25 +175,25 @@ public class VistaAddPersona extends javax.swing.JFrame {
                     .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(inpMail1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inpEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblMail1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(inpMail2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inpTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTelefono1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTelefono2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(inpMail3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(inpDni, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnCancelarPersona, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCancelarPersona1, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
+                    .addComponent(btnGuardarPersona, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
         inpNombre.getAccessibleContext().setAccessibleName("Nombre");
-        inpMail3.getAccessibleContext().setAccessibleDescription("Escriba el DNI de la persona a añadir");
+        inpDni.getAccessibleContext().setAccessibleDescription("Escriba el DNI de la persona a añadir");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -176,6 +206,77 @@ public class VistaAddPersona extends javax.swing.JFrame {
         
         this.dispose();
     }//GEN-LAST:event_btnCancelarPersonaActionPerformed
+
+    private void btnGuardarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarPersonaActionPerformed
+        // TODO add your handling code here:
+        if (inpNombre.getText().trim().isEmpty() || inpDni.getText().trim().isEmpty()) {
+
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "NOMBRE y DNI son campos obligatorios. Completelos para continuar.",
+                "Campos vacíos",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+           
+            String nombre = inpNombre.getText().trim();
+            String telefono = inpTelefono.getText().trim();
+            String email = inpEmail.getText().trim();
+            String dni = inpDni.getText().trim();
+            
+            Models.Dao.PersonasDao dao = Models.Dao.PersonasDao.getInstance();
+            if (editando != null) {
+                editando.setNombre(nombre);
+                editando.setTelefono(telefono);
+                editando.setEmail(email);
+                editando.setDni(dni);
+                
+                dao.update(editando);
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Persona actualizada correctamente.",
+                    "Éxito",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                
+                Views.VistaHabitacion vista = new Views.VistaHabitacion();
+                vista.setVisible(true);
+                vista.setLocationRelativeTo(null);
+                this.dispose();
+                
+            } else{
+                // objeto modelo
+                Persona nueva = new Persona();
+                nueva.setNombre(nombre);
+                nueva.setTelefono(telefono);
+                nueva.setEmail(email);
+                nueva.setDni(dni);
+
+                
+                dao.save(nueva);
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Persona agregada correctamente.",
+                    "Éxito",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                Views.VistaPersona vista = new Views.VistaPersona();
+                vista.setVisible(true);
+                vista.setLocationRelativeTo(null);
+                this.dispose();
+            }
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error al guardar la persona:\n" + e.getMessage(),
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            
+        }
+    }//GEN-LAST:event_btnGuardarPersonaActionPerformed
+
+    private void inpNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inpNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inpNombreActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,11 +315,11 @@ public class VistaAddPersona extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelarPersona;
-    private javax.swing.JButton btnCancelarPersona1;
-    private javax.swing.JTextField inpMail1;
-    private javax.swing.JTextField inpMail2;
-    private javax.swing.JTextField inpMail3;
+    private javax.swing.JButton btnGuardarPersona;
+    private javax.swing.JTextField inpDni;
+    private javax.swing.JTextField inpEmail;
     private javax.swing.JTextField inpNombre;
+    private javax.swing.JTextField inpTelefono;
     private javax.swing.JLabel lblAddPer;
     private javax.swing.JLabel lblMail1;
     private javax.swing.JLabel lblNombre;
