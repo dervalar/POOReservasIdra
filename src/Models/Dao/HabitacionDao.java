@@ -109,12 +109,36 @@ public class HabitacionDao implements Dao<Habitacion>{
 
     @Override
     public void delete(int id) throws DaoException {
-        String sql = "DELETE FROM habitacion WHERE id = ? AND estado = 'DISPONIBLE'";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+        String sql = "DELETE FROM habitacion WHERE id = ?";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
             ps.setInt(1, id);
             ps.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DaoException(ex.getMessage());
+
+        } catch (SQLException e) {
+            throw new DaoException(e.getMessage());
+        }
+    }
+
+    public void clausurar(int id) throws DaoException {
+        String sql = "UPDATE habitacion SET estado = 'CLAUSURADA' WHERE id = ?";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            int rows = ps.executeUpdate();
+
+            if (rows == 0) {
+                throw new DaoException("No se encontró la habitación con ID: " + id);
+            }
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al clausurar habitación: " + e.getMessage());
         }
     }
 
@@ -125,5 +149,22 @@ public class HabitacionDao implements Dao<Habitacion>{
                 "root88"
         );
     }
+    
+    public void actualizarEstado(int id, String estado) throws DaoException {
+        String sql = "UPDATE habitacion SET estado = ? WHERE id = ?";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, estado);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al actualizar estado: " + e.getMessage());
+        }
+    }
+
     
 }

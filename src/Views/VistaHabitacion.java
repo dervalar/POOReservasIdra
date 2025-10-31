@@ -10,7 +10,51 @@ import Models.Habitacion;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.Component;
+import java.awt.Color;
+
+class EstadoCellRenderer extends DefaultTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(javax.swing.JTable table,
+            Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+        if (value != null) {
+            String estado = value.toString().toUpperCase();
+
+            switch (estado) {
+                case "DISPONIBLE":
+                    c.setBackground(new Color(144, 238, 144)); // verde claro
+                    break;
+                    
+                case "OCUPADA":
+                    c.setBackground(new Color(255, 255, 153)); // amarillo suave
+                    break;
+                    
+                case "CLAUSURADA":
+                    c.setBackground(new Color(255, 102, 102)); // rojo claro
+                    break;
+                    
+                default:
+                    c.setBackground(Color.WHITE);
+                    break;
+            }
+        } else {
+            c.setBackground(Color.WHITE);
+        }
+
+        // Si está seleccionada, mantené el color de selección
+        if (isSelected) {
+            c.setBackground(new Color(100, 150, 255));
+        }
+
+        return c;
+    }
+}
 
 /**
  *
@@ -192,45 +236,47 @@ public class VistaHabitacion extends javax.swing.JFrame {
 
     private void btnDeleteHabitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteHabitacionActionPerformed
         // TODO add your handling code here:
-        int filaSeleccionada = tblHabitaciones.getSelectedRow();
-
-        if (filaSeleccionada == -1) {
-            // Ninguna fila seleccionada
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Por favor, seleccioná una habitación para eliminar.",
-                "Sin selección",
-                javax.swing.JOptionPane.WARNING_MESSAGE);
+        int fila = tblHabitaciones.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this,
+                "Selecciona una habitación primero.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        
-        int idHabitacion = Integer.parseInt(tblHabitaciones.getValueAt(filaSeleccionada, 0).toString());
-        String numeroHabitacion = tblHabitaciones.getValueAt(filaSeleccionada, 1).toString();
+        int id = (int) tblHabitaciones.getValueAt(fila, 0);
+        String estado = tblHabitaciones.getValueAt(fila, 5).toString(); // asumiendo que la columna 5 es “estado”
 
-        // Confirmación del usuario
-        int opcion = javax.swing.JOptionPane.showConfirmDialog(this,
-            "¿Seguro que querés eliminar la habitación Nº " + numeroHabitacion + "?",
-            "Confirmar eliminación",
-            javax.swing.JOptionPane.YES_NO_OPTION,
-            javax.swing.JOptionPane.WARNING_MESSAGE);
+        if (estado.equalsIgnoreCase("CLAUSURADA")) {
+            JOptionPane.showMessageDialog(this,
+                "La habitación ya está clausurada.",
+                "Información", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
-        if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "¿Seguro que querés clausurar esta habitación?",
+            "Confirmar acción",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
             try {
-                
-                habitacionDao.delete(idHabitacion);  // tu método deleteById o similar
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Habitación eliminada correctamente.",
-                    "Éxito",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                HabitacionDao habitacionDao = HabitacionDao.getInstance();
+                habitacionDao.clausurar(id);
 
-                // Refrescar tabla
+                JOptionPane.showMessageDialog(this,
+                    "Habitación clausurada correctamente.",
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
                 cargarTabla();
 
-            } catch (Exception e) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Error al eliminar la habitación:\n" + e.getMessage(),
-                    "Error",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            } catch (DaoException e) {
+                JOptionPane.showMessageDialog(this,
+                    "Error al clausurar la habitación:\n" + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnDeleteHabitacionActionPerformed
@@ -343,6 +389,10 @@ public class VistaHabitacion extends javax.swing.JFrame {
             tblHabitaciones.getColumnModel().getColumn(4).setPreferredWidth(90);  // Precio
             tblHabitaciones.getColumnModel().getColumn(5).setPreferredWidth(110); // Estado
         }
+        tblHabitaciones.getColumnModel()
+        .getColumn(5)
+        .setCellRenderer(new EstadoCellRenderer());
+
     }
     
     private Models.Dao.HabitacionDao habitacionDao;

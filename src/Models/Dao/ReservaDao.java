@@ -124,7 +124,18 @@ public class ReservaDao implements Dao<Reserva>{
 
     @Override
     public void delete(int id) throws DaoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "DELETE FROM reserva WHERE id = ?";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al eliminar la reserva: " + e.getMessage());
+        }
     }
     
     private void conectar() throws SQLException {
@@ -140,4 +151,76 @@ public class ReservaDao implements Dao<Reserva>{
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
+    public boolean isDisponible(int habitacionId, Date checkIn, Date checkOut) throws DaoException {
+        String sql = """
+            SELECT COUNT(*) 
+            FROM reserva 
+            WHERE habitacion_id = ? 
+              AND (
+                    (check_in <= ? AND check_out >= ?)  -- se superpone con fecha inicio
+                 OR (check_in <= ? AND check_out >= ?)  -- se superpone con fecha fin
+                 OR (check_in >= ? AND check_out <= ?)  -- está completamente dentro del rango
+              )
+        """;
+
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, habitacionId);
+            ps.setDate(2, checkIn);
+            ps.setDate(3, checkIn);
+            ps.setDate(4, checkOut);
+            ps.setDate(5, checkOut);
+            ps.setDate(6, checkIn);
+            ps.setDate(7, checkOut);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count == 0; // true = disponible
+            }
+            return true;
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al comprobar disponibilidad: " + e.getMessage());
+        }
+    }
+
+    public int obtenerIdHabitacionPorReserva(int reservaId) throws DaoException {
+        String sql = "SELECT habitacion_id FROM reserva WHERE id = ?";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, reservaId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("habitacion_id");
+            }
+            throw new DaoException("No se encontró la reserva con ID " + reservaId);
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al obtener habitación de la reserva: " + e.getMessage());
+        }
+    }
+
+    public void actualizarEstado(int id, String estado) throws DaoException {
+        String sql = "UPDATE reserva SET estado = ? WHERE id = ?";
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, estado);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al actualizar estado de reserva: " + e.getMessage());
+        }
+    }
+
 }

@@ -11,6 +11,7 @@ import Models.Dao.ReservaDao;
 import Models.Habitacion;
 import Models.Persona;
 import Models.Reserva;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,6 +23,10 @@ public class VistaAddReservas extends javax.swing.JFrame {
     /**
      * Creates new form VistaAddReservas
      */
+    private boolean esEdicion = false;
+    private int idReservaActual = -1;
+
+    
     public VistaAddReservas() {
         initComponents();
         
@@ -177,7 +182,7 @@ public class VistaAddReservas extends javax.swing.JFrame {
         lblMonto1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         cbEstado.setForeground(new java.awt.Color(0, 0, 0));
-        cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PENDIENTE", "PAGADA", "CANCELADA" }));
+        cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PENDIENTE", "EN CURSO", "FINALIZADA", "CANCELADA", " " }));
 
         javax.swing.GroupLayout pnHabitacionLayout = new javax.swing.GroupLayout(pnHabitacion);
         pnHabitacion.setLayout(pnHabitacionLayout);
@@ -335,51 +340,82 @@ public class VistaAddReservas extends javax.swing.JFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
         try {
-        // Validaciones básicas
-        if (cbPersona.getSelectedItem() == null ||
-            cbHabitacion.getSelectedItem() == null ||
-            dcCheckIn.getDate() == null ||
-            dcCheckOut.getDate() == null ||
-            txtMonto.getText().isBlank()) {
+            if (cbPersona.getSelectedItem() == null ||
+                cbHabitacion.getSelectedItem() == null ||
+                dcCheckIn.getDate() == null ||
+                dcCheckOut.getDate() == null ||
+                txtMonto.getText().isBlank()) {
 
+                JOptionPane.showMessageDialog(this,
+                    "Por favor complete todos los campos antes de guardar.",
+                    "Campos incompletos", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // dao
+            ReservaDao reservaDao = ReservaDao.getInstance();
+            HabitacionDao habitacionDao = HabitacionDao.getInstance();
+
+            int idPersona = buscarIdPersona(cbPersona.getSelectedItem().toString());
+            int idHabitacion = buscarIdHabitacion(cbHabitacion.getSelectedItem().toString());
+            java.sql.Date checkIn = new java.sql.Date(dcCheckIn.getDate().getTime());
+            java.sql.Date checkOut = new java.sql.Date(dcCheckOut.getDate().getTime());
+            String montoTexto = txtMonto.getText().replace(",", ".");
+            double monto = Double.parseDouble(montoTexto);
+            String estado = cbEstado.getSelectedItem().toString();
+
+            Reserva r = new Reserva();
+            r.setPersonaId(idPersona);
+            r.setHabitacionId(idHabitacion);
+            r.setCheckIn(checkIn);
+            r.setCheckOut(checkOut);
+            r.setMonto(monto);
+            r.setEstado(estado);
+
+            // EDICIÓN
+            if (esEdicion && idReservaActual != -1) {
+                r.setId(idReservaActual);
+                reservaDao.update(r);
+
+                if (estado.equalsIgnoreCase("CANCELADA") || estado.equalsIgnoreCase("FINALIZADA")) {
+                habitacionDao.actualizarEstado(idHabitacion, "DISPONIBLE");
+
+                String mensaje = estado.equalsIgnoreCase("CANCELADA")
+                        ? "Reserva cancelada.\nLa habitación fue liberada (DISPONIBLE)."
+                        : "Reserva finalizada.\nLa habitación fue liberada para nuevos huéspedes.";
+
+                JOptionPane.showMessageDialog(this, mensaje, "Habitación liberada",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                } else {
+                JOptionPane.showMessageDialog(this,
+                    "Reserva actualizada correctamente.",
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+
+            } else {
+                // MODO NUEVA RESERVA
+                reservaDao.save(r);
+                habitacionDao.actualizarEstado(idHabitacion, "OCUPADA");
+
+                JOptionPane.showMessageDialog(this,
+                    "Reserva creada correctamente.\nLa habitación fue marcada como OCUPADA.",
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // 🔹 Volver a VistaReserva
+            new VistaReservas().setVisible(true);
+            this.dispose();
+
+        } catch (DaoException e) {
             JOptionPane.showMessageDialog(this,
-                    "Por favor complete todos los campos.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Convertir fechas
-        java.sql.Date checkIn = new java.sql.Date(dcCheckIn.getDate().getTime());
-        java.sql.Date checkOut = new java.sql.Date(dcCheckOut.getDate().getTime());
-
-        // Crear objeto reserva
-        Reserva r = new Reserva();
-        r.setHabitacionId(buscarIdHabitacion(cbHabitacion.getSelectedItem().toString()));
-        r.setPersonaId(buscarIdPersona(cbPersona.getSelectedItem().toString()));
-        r.setCheckIn(checkIn);
-        r.setCheckOut(checkOut);
-        r.setMonto(Double.parseDouble(txtMonto.getText().replace(",", ".")));
-        r.setEstado(cbEstado.getSelectedItem().toString());
-
-        // Guardar en BD
-        ReservaDao dao = ReservaDao.getInstance();
-        dao.save(r);
-
-        JOptionPane.showMessageDialog(this,
-                "Reserva guardada exitosamente.",
-                "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-        this.dispose(); // Cierra la ventana actual
-        new VistaReservas().setVisible(true); // Vuelve a la vista principal
-
-        } catch (DaoException ex) {
+                "Error al guardar la reserva:\n" + e.getMessage(),
+                "Error DAO", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                    "Error al guardar la reserva:\n" + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error inesperado:\n" + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                "Error inesperado:\n" + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
         
     }//GEN-LAST:event_btnGuardarActionPerformed
@@ -524,6 +560,62 @@ public class VistaAddReservas extends javax.swing.JFrame {
             System.err.println("Error al mostrar precio: " + e.getMessage());
         }
     }
+
+    public void setDatosReserva(int id, String dniPersona, String numeroHabitacion, java.util.Date checkIn, java.util.Date checkOut, double monto, String estado){
+        try {
+            // 🔹 Seleccionar persona en el ComboBox
+            cbPersona.setSelectedItem(dniPersona);
+
+            // 🔹 Seleccionar habitación
+            cbHabitacion.setSelectedItem(numeroHabitacion);
+
+            // 🔹 Asignar fechas al JDateChooser
+            dcCheckIn.setDate(checkIn);
+            dcCheckOut.setDate(checkOut);
+
+            // 🔹 Cargar monto total (reemplazamos punto por coma solo si querés mostrar formato local)
+            txtMonto.setText(String.format("%.2f", monto).replace('.', ','));
+
+            // 🔹 Estado actual
+            cbEstado.setSelectedItem(estado);
+
+            // 🔹 Si querés mostrar el precio por noche, podés buscarlo con el DAO:
+            HabitacionDao habitacionDao = HabitacionDao.getInstance();
+            for (Habitacion h : habitacionDao.findAll()) {
+                if (h.getNumero().equals(numeroHabitacion)) {
+                    txtPrecio.setText(String.format("%.2f", h.getPrecioBase()).replace('.', ','));
+                    break;
+                }
+            }
+
+            // 🔹 Cambiar texto del botón GUARDAR a "ACTUALIZAR"
+            btnGuardar.setText("ACTUALIZAR");
+
+            // 🔹 Activar modo edición
+            this.idReservaActual = id;
+            esEdicion = true;
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Error al cargar los datos de la reserva: " + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void resetearReserva() {
+        this.idReservaActual = -1;  // vuelve a estado "sin reserva"
+        this.esEdicion = false;     // desactiva el modo edición
+
+        // Limpia los campos visuales
+        cbPersona.setSelectedIndex(-1);
+        cbHabitacion.setSelectedIndex(-1);
+        txtPrecio.setText("");
+        txtMonto.setText("");
+        cbEstado.setSelectedItem("PENDIENTE");
+        dcCheckIn.setDate(null);
+        dcCheckOut.setDate(null);
+    }
+
 
 
 /**

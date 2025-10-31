@@ -5,10 +5,12 @@
 package Views;
 
 import Models.Dao.DaoException;
+import Models.Dao.HabitacionDao;
 import Models.Reserva;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import Models.Dao.ReservaDao;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -41,9 +43,9 @@ public class VistaReservas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblReservas = new javax.swing.JTable();
         btnMenu1 = new javax.swing.JButton();
+        btnEliminarReserva = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(600, 400));
 
         lblReservas.setFont(new java.awt.Font("Lucida Console", 1, 32)); // NOI18N
         lblReservas.setText("RESERVAS");
@@ -91,6 +93,14 @@ public class VistaReservas extends javax.swing.JFrame {
             }
         });
 
+        btnEliminarReserva.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnEliminarReserva.setText("-");
+        btnEliminarReserva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarReservaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,10 +113,12 @@ public class VistaReservas extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(btnMenu1))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnAddReserva)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnUpdateReserva))
+                        .addGap(27, 27, 27)
+                        .addComponent(btnUpdateReserva)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnEliminarReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -116,13 +128,14 @@ public class VistaReservas extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdateReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnAddReserva, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(btnUpdateReserva, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(btnEliminarReserva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -143,13 +156,90 @@ public class VistaReservas extends javax.swing.JFrame {
         VistaAddReservas vAddReservas = new VistaAddReservas();
         vAddReservas.setVisible(true);
         vAddReservas.setLocationRelativeTo(null);
+        vAddReservas.resetearReserva();
         
         this.dispose();
     }//GEN-LAST:event_btnAddReservaActionPerformed
 
     private void btnUpdateReservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateReservaActionPerformed
         // TODO add your handling code here:
+        int fila = tblReservas.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this,
+                "Seleccioná una reserva para actualizar.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            int id = (int) tblReservas.getValueAt(fila, 0);
+            String habitacion = tblReservas.getValueAt(fila, 1).toString();
+            String persona = tblReservas.getValueAt(fila, 2).toString();
+            java.util.Date checkIn = (java.util.Date) tblReservas.getValueAt(fila, 3);
+            java.util.Date checkOut = (java.util.Date) tblReservas.getValueAt(fila, 4);
+            double monto = Double.parseDouble(tblReservas.getValueAt(fila, 5).toString());
+            String estado = tblReservas.getValueAt(fila, 6).toString();
+
+            // Abrir la vista de edición
+            VistaAddReservas vistaAdd = new VistaAddReservas();
+            vistaAdd.setDatosReserva(id, persona, habitacion, checkIn, checkOut, monto, estado);
+            vistaAdd.setVisible(true);
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Error al cargar datos: " + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnUpdateReservaActionPerformed
+
+    private void btnEliminarReservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarReservaActionPerformed
+        // TODO add your handling code here:
+        int fila = tblReservas.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this,
+                "Seleccioná una reserva primero.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int reservaId = (int) tblReservas.getValueAt(fila, 0);
+
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "¿Seguro que querés eliminar esta reserva?",
+            "Confirmar eliminación",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                ReservaDao reservaDao = ReservaDao.getInstance();
+                HabitacionDao habitacionDao = HabitacionDao.getInstance();
+
+                // 🔹 1. Obtener la habitación asociada
+                int habitacionId = reservaDao.obtenerIdHabitacionPorReserva(reservaId);
+
+                // 🔹 2. Eliminar la reserva
+                reservaDao.delete(reservaId);
+
+                // 🔹 3. Devolver habitación a DISPONIBLE
+                habitacionDao.actualizarEstado(habitacionId, "DISPONIBLE");
+
+                JOptionPane.showMessageDialog(this,
+                    "Reserva eliminada correctamente.\nLa habitación volvió a estado DISPONIBLE.",
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                cargarTabla();
+
+            } catch (DaoException e) {
+                JOptionPane.showMessageDialog(this,
+                    "Error al eliminar la reserva:\n" + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnEliminarReservaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -227,6 +317,7 @@ public class VistaReservas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddReserva;
+    private javax.swing.JButton btnEliminarReserva;
     private javax.swing.JButton btnMenu1;
     private javax.swing.JButton btnUpdateReserva;
     private javax.swing.JScrollPane jScrollPane1;

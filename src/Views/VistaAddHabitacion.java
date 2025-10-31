@@ -24,6 +24,7 @@ public class VistaAddHabitacion extends javax.swing.JFrame {
         
         cmbEstado.addItem("DISPONIBLE");
         cmbEstado.addItem("OCUPADA");
+        cmbEstado.addItem("CLAUSURADA");
         setLocationRelativeTo(null);
         setTitle("Agregar Habitación");
     }
