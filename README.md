@@ -14,3 +14,8 @@
 - Password: `root88`
 
 > Si cambia usuario/password, editar en los DAO (HabitacionDao, PersonaDao, ReservaDao).
+
+---
+## Licencia
+Este proyecto está licenciado bajo la [Apache License 2.0](./LICENSE).  
+(c) 2025 Lisandro Gonzalo. Todos los derechos reservados.
