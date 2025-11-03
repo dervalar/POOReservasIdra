@@ -18,4 +18,4 @@
 ---
 ## Licencia
 Este proyecto está licenciado bajo la [Apache License 2.0](./LICENSE).  
-(c) 2025 Lisandro Frende, Mariano Scarcella. Todos los derechos reservados.
+(c) 2025 Lisandro Frende, Mariano Scarcella, Charo de Don Pedro. Todos los derechos reservados.
