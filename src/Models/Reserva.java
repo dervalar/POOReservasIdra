@@ -4,7 +4,7 @@
  */
 package Models;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *
@@ -15,8 +15,8 @@ public class Reserva {
     private int id;
     private int habitacionId;
     private int personaId;
-    private Date checkIn;
-    private Date checkOut;
+    private java.sql.Date checkIn;
+    private java.sql.Date checkOut;
     private double monto;
     private String estado;
     private String numeroHabitacion;
@@ -34,10 +34,12 @@ public class Reserva {
     public void setPersonaId(int personaId) { this.personaId = personaId; }
 
     public Date getCheckIn() { return checkIn; }
-    public void setCheckIn(Date checkIn) { this.checkIn = checkIn; }
+    public void setCheckIn(java.util.Date d)  { this.checkIn  = new java.sql.Date(d.getTime()); }
+
+
 
     public Date getCheckOut() { return checkOut; }
-    public void setCheckOut(Date checkOut) { this.checkOut = checkOut; }
+    public void setCheckOut(java.util.Date d) { this.checkOut = new java.sql.Date(d.getTime()); }
 
     public double getMonto() { return monto; }
     public void setMonto(double monto) { this.monto = monto; }

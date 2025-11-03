@@ -340,6 +340,7 @@ public class VistaAddReservas extends javax.swing.JFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
         try {
+            
             if (cbPersona.getSelectedItem() == null ||
                 cbHabitacion.getSelectedItem() == null ||
                 dcCheckIn.getDate() == null ||
@@ -352,10 +353,10 @@ public class VistaAddReservas extends javax.swing.JFrame {
                 return;
             }
 
-            // dao
             ReservaDao reservaDao = ReservaDao.getInstance();
             HabitacionDao habitacionDao = HabitacionDao.getInstance();
 
+            // formulario
             int idPersona = buscarIdPersona(cbPersona.getSelectedItem().toString());
             int idHabitacion = buscarIdHabitacion(cbHabitacion.getSelectedItem().toString());
             java.sql.Date checkIn = new java.sql.Date(dcCheckIn.getDate().getTime());
@@ -364,6 +365,7 @@ public class VistaAddReservas extends javax.swing.JFrame {
             double monto = Double.parseDouble(montoTexto);
             String estado = cbEstado.getSelectedItem().toString();
 
+            // Reserva
             Reserva r = new Reserva();
             r.setPersonaId(idPersona);
             r.setHabitacionId(idHabitacion);
@@ -372,39 +374,33 @@ public class VistaAddReservas extends javax.swing.JFrame {
             r.setMonto(monto);
             r.setEstado(estado);
 
-            // EDICIÓN
+            // actualización o nueva
             if (esEdicion && idReservaActual != -1) {
                 r.setId(idReservaActual);
                 reservaDao.update(r);
 
+                // liberar habitación
                 if (estado.equalsIgnoreCase("CANCELADA") || estado.equalsIgnoreCase("FINALIZADA")) {
-                habitacionDao.actualizarEstado(idHabitacion, "DISPONIBLE");
-
-                String mensaje = estado.equalsIgnoreCase("CANCELADA")
-                        ? "Reserva cancelada.\nLa habitación fue liberada (DISPONIBLE)."
-                        : "Reserva finalizada.\nLa habitación fue liberada para nuevos huéspedes.";
-
-                JOptionPane.showMessageDialog(this, mensaje, "Habitación liberada",
-                        JOptionPane.INFORMATION_MESSAGE);
-
+                    habitacionDao.actualizarEstado(idHabitacion, "DISPONIBLE");
+                    JOptionPane.showMessageDialog(this,
+                        "Reserva actualizada. La habitación fue liberada (DISPONIBLE).",
+                        "Reserva finalizada/cancelada", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                JOptionPane.showMessageDialog(this,
-                    "Reserva actualizada correctamente.",
-                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                        "Reserva actualizada correctamente.",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 }
 
-
             } else {
-                // MODO NUEVA RESERVA
+                //Nueva reserva
                 reservaDao.save(r);
                 habitacionDao.actualizarEstado(idHabitacion, "OCUPADA");
 
                 JOptionPane.showMessageDialog(this,
-                    "Reserva creada correctamente.\nLa habitación fue marcada como OCUPADA.",
+                    "Reserva creada correctamente. La habitación fue marcada como OCUPADA.",
                     "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            // 🔹 Volver a VistaReserva
             new VistaReservas().setVisible(true);
             this.dispose();
 

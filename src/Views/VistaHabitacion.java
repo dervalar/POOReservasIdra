@@ -125,6 +125,7 @@ public class VistaHabitacion extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tblHabitaciones.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jScrollPane1.setViewportView(tblHabitaciones);
 
         btnAddHabitacion.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 1, 24)); // NOI18N

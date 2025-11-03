@@ -147,9 +147,34 @@ public class ReservaDao implements Dao<Reserva>{
     }
 
     @Override
-    public void update(Reserva t) throws DaoException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void update(Reserva r) throws DaoException {
+        String sql = """
+            UPDATE reserva
+            SET habitacion_id = ?, persona_id = ?, check_in = ?, check_out = ?, monto = ?, estado = ?
+            WHERE id = ?
+        """;
+
+        try (Connection cn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/hotel?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "root", "root88");
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, r.getHabitacionId());
+            ps.setInt(2, r.getPersonaId());
+            ps.setDate(3, r.getCheckIn());
+            ps.setDate(4, r.getCheckOut());
+            ps.setDouble(5, r.getMonto());
+            ps.setString(6, r.getEstado());
+            ps.setInt(7, r.getId());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("Error al actualizar la reserva: " + e.getMessage());
+
+        }
     }
+    
     
     public boolean isDisponible(int habitacionId, Date checkIn, Date checkOut) throws DaoException {
         String sql = """

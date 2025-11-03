@@ -83,6 +83,7 @@ public class VistaReservas extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tblReservas.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jScrollPane1.setViewportView(tblReservas);
 
         btnMenu1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
